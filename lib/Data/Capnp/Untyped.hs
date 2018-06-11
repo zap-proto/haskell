@@ -23,7 +23,6 @@ module Data.Capnp.Untyped
     , get, index, length
     , rootPtr
     , rawBytes
-    -- , flatten
     , extractElts
     , ReadCtx
     , HasMessage(..), MessageDefault(..)
@@ -39,14 +38,14 @@ import Control.Monad.Catch       (MonadThrow(throwM))
 import Data.Capnp.Address        (WordAddr(..))
 import Data.Capnp.Bits
     (ByteCount(..), Word1(..), WordCount(..), wordsToBytes)
-import Data.Capnp.Blob           (slice)
 import Data.Capnp.Pointer        (ElementSize(..))
 import Data.Capnp.TraversalLimit (MonadLimit(invoice))
 
-import qualified Data.ByteString    as BS
-import qualified Data.Capnp.Errors  as E
-import qualified Data.Capnp.Message as M
-import qualified Data.Capnp.Pointer as P
+import qualified Data.ByteString            as BS
+import qualified Data.Capnp.Errors          as E
+import qualified Data.Capnp.Message         as M
+import qualified Data.Capnp.Message.Generic as GM
+import qualified Data.Capnp.Pointer         as P
 
 -- | Type (constraint) synonym for the constraints needed for most read
 -- operations.
@@ -239,7 +238,7 @@ get msg addr = do
                                 show ptr
 
   where
-    getWord msg addr = invoice 1 *> M.getWord msg addr
+    getWord msg addr = invoice 1 *> GM.getWord msg addr
     resolveOffset addr@WordAt{..} off =
         addr { wordIndex = wordIndex + fromIntegral off + 1 }
     getList addr@WordAt{..} eltSpec = PtrList <$>
@@ -290,7 +289,7 @@ index i list = invoice 1 >> index' list
     index' (ListOfWord16 nlist) = indexNList nlist 4
     index' (ListOfWord32 nlist) = indexNList nlist 2
     index' (ListOfWord64 (NormalList msg addr@WordAt{..} len))
-        | i < len = M.getWord msg addr { wordIndex = wordIndex + WordCount i }
+        | i < len = GM.getWord msg addr { wordIndex = wordIndex + WordCount i }
         | otherwise = throwM E.BoundsError { E.index = i, E.maxIndex = len - 1}
     index' (ListOfPtr (NormalList msg addr@WordAt{..} len))
         | i < len = get msg addr { wordIndex = wordIndex + WordCount i }
@@ -301,7 +300,7 @@ index i list = invoice 1 >> index' list
     indexNList (NormalList msg addr@WordAt{..} len) eltsPerWord
         | i < len = do
             let wordIndex' = wordIndex + WordCount (i `div` eltsPerWord)
-            word <- M.getWord msg addr { wordIndex = wordIndex' }
+            word <- GM.getWord msg addr { wordIndex = wordIndex' }
             let shift = (i `mod` eltsPerWord) * (64 `div` eltsPerWord)
             pure $ fromIntegral $ word `shiftR` shift
         | otherwise = throwM E.BoundsError { E.index = i, E.maxIndex = len - 1 }
@@ -358,8 +357,9 @@ getPtr i struct
 --   element size is less than < 1 byte (() and Bool).
 rawBytes :: ReadCtx m => ListOf a -> m BS.ByteString
 rawBytes (ListOfWord8 (NormalList msg WordAt{..} len)) = do
-    seg <- M.getSegment msg segIndex
-    slice seg (wordsToBytes wordIndex) (ByteCount len)
+    bytes <- GM.getSegment msg segIndex >>= GM.toByteString
+    let ByteCount byteOffset = wordsToBytes wordIndex
+    pure $ BS.take len $ BS.drop byteOffset bytes
 rawBytes (ListOfWord16 nlist@NormalList{..}) = rawBytes (ListOfWord8 nlist { nLen = nLen * 2 })
 rawBytes (ListOfWord32 nlist@NormalList{..}) = rawBytes (ListOfWord8 nlist { nLen = nLen * 4 })
 rawBytes (ListOfWord64 nlist@NormalList{..}) = rawBytes (ListOfWord8 nlist { nLen = nLen * 8 })
