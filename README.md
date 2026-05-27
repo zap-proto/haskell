@@ -11,6 +11,9 @@ via codeberg.
 
 # Getting Started
 
+> **Docs:** [ZAP Haskell SDK](https://zap-proto.dev/docs/sdks/haskell) · part of the [ZAP Protocol](https://zap-proto.io)
+
+
 There is a module `Capnp.Tutorial` which contains an introduction
 to the library; users are *strongly* encouraged to read this first, as
 the reference documentation can be bewildering without that context.
