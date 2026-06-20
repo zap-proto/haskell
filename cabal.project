@@ -1,5 +1,10 @@
 packages: */*.cabal
 
+-- Build the test suites as part of the default plan so `cabal build all` and
+-- `cabal test all` work on a fresh checkout (CI included) without a local
+-- cabal.project.local. (No `benchmarks: True` — the project ships no benchmark.)
+tests: True
+
 -- lifetimes-0.2.0.1 carries a stale conservative bound `transformers < 0.6`.
 -- GHC 9.4+ ships transformers 0.6.x as a boot library, and lifetimes compiles
 -- cleanly against it (the 0.5->0.6 change only dropped long-deprecated
