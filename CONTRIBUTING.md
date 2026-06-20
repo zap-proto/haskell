@@ -7,7 +7,7 @@ issues if you find them.
 If you're looking to hack on the library, great! If you don't have
 something specific in mind and you're looking for a task to get your
 feet wet, there are a number of open issues labeled
-["good first issue"](https://github.com/zenhack/haskell-capnp/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22);
+["good first issue"](https://github.com/zap-proto/haskell/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22);
 these are self-contained, well-defined tasks that touch a relatively
 small portion of the code, and so don't require deep understanding of
 the structure of the library as a whole; as such they're great for new
@@ -137,14 +137,14 @@ import qualified Data.ByteString as BS
 
 -- same structure for modules within our library:
 
-import Capnp.Untyped hiding (length)
+import Zap.Untyped hiding (length)
 
-import Capnp.Bits
+import Zap.Bits
 
-import Capnp.TraversalLimit(defaultLimit, evalLimitT)
+import Zap.TraversalLimit(defaultLimit, evalLimitT)
 
-import qualified Capnp.Message as M
-import qualified Capnp.Basics as B
+import qualified Zap.Message as M
+import qualified Zap.Basics as B
 ```
 
 The formatter will take care of formatting the sections correctly, as

@@ -20,19 +20,19 @@ RUN cabal install hlint stylish-haskell
 RUN ln -s /root/.cabal/bin/hlint /usr/local/bin/hlint
 RUN ln -s /root/.cabal/bin/stylish-haskell /usr/local/bin/stylish-haskell
 
-# Install stuff needed to build capnproto:
+# Install stuff needed to build zap:
 RUN apk add \
 	autoconf \
 	automake \
 	libtool \
 	linux-headers
 
-# Build and install a recent version of capnproto; the distro version is
+# Build and install a recent version of zap; the distro version is
 # outdated. Furthermore, we use the calculator-client & server examples as
 # part of our test suite, so we need to build that anyway:
-RUN wget "https://github.com/capnproto/capnproto/archive/v0.8.0.tar.gz"
+RUN wget "https://github.com/zap/zap/archive/v0.8.0.tar.gz"
 RUN tar -xvf *.tar.gz
-RUN cd capnproto-*/c++ && \
+RUN cd zap-*/c++ && \
 	autoreconf -i && \
 	./configure --prefix=/usr/local && \
 	make -j && \
@@ -40,19 +40,19 @@ RUN cd capnproto-*/c++ && \
 
 # Build and install the C++ calculator example client & server, which
 # we'll use to validate our own implementations:
-RUN cd capnproto-*/c++/samples && \
-	capnpc -oc++ calculator.capnp && \
+RUN cd zap-*/c++/samples && \
+	zapc -oc++ calculator.zap && \
 	c++ \
 		calculator-client.c++ \
 		-std=c++14 \
-		calculator.capnp.c++ \
-		$(pkg-config --cflags --libs capnp-rpc) \
+		calculator.zap.c++ \
+		$(pkg-config --cflags --libs zap-rpc) \
 		-o calculator-client && \
 	c++ \
 		calculator-server.c++ \
 		-std=c++14 \
-		calculator.capnp.c++ \
-		$(pkg-config --cflags --libs capnp-rpc) \
+		calculator.zap.c++ \
+		$(pkg-config --cflags --libs zap-rpc) \
 		-o calculator-server && \
 	install -Dm755 calculator-client /usr/local/bin/c++-calculator-client && \
 	install -Dm755 calculator-server /usr/local/bin/c++-calculator-server
