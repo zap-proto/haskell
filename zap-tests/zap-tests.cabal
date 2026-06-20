@@ -69,8 +69,6 @@ test-suite tests
     hs-source-dirs:
       tests
       gen/tests
-      examples/lib
-      examples/gen/lib
     ghc-options:
       -threaded
     other-modules:
@@ -123,15 +121,3 @@ test-suite tests
       , deepseq
       , pretty-show
       , supervisors
-
-
-benchmark bench
-  import: shared-opts
-  type: exitcode-stdio-1.0
-  main-is: Main.hs
-  hs-source-dirs: bench
-  build-depends:
-      zap
-    , criterion >=1.5.9 && <1.7
-    , deepseq
-    , process-extras

@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE FlexibleContexts #-}
@@ -587,10 +588,11 @@ runVatPair getBootstrap withBootstrap = withTransportPair $ \(clientTrans, serve
   race_ runServer runClient
 
 expectException ::
+  forall c a pr.
   ( IsCap c,
     TypeParam a,
-    Parse a pa,
-    Show pa,
+    Parse a (Parsed a),
+    Show (Parsed a),
     R.ReprFor a ~ 'R.Ptr pr
   ) =>
   (Client c -> IO (Pipeline a)) ->
@@ -603,5 +605,9 @@ expectException callFn wantExn cap = do
     Left (e :: Parsed Exception) ->
       liftIO $ e `shouldBe` wantExn
     Right val -> do
-      parsed <- evalLimitT defaultLimit (parse val)
+      -- Annotate the parsed result as `Parsed a` so GHC discharges the
+      -- `Parse a (Parsed a)` constraint directly, instead of resolving a fresh
+      -- metavariable through the generic instance (which the waitPipeline-forced
+      -- `ReprFor a ~ 'R.Ptr pr` rewrites to a form fundep-coherence can't unify).
+      parsed <- evalLimitT defaultLimit (parse val) :: IO (Parsed a)
       error $ "Should have received exn, but got " ++ show parsed
