@@ -4,9 +4,9 @@
 
 module Main (main) where
 
-import qualified Capnp as C
-import Capnp.Mutability (thaw)
-import qualified Capnp.Untyped as U
+import qualified Zap as C
+import Zap.Mutability (thaw)
+import qualified Zap.Untyped as U
 import Control.DeepSeq (NFData (..))
 import Control.Monad (unless)
 import Criterion.Main
@@ -15,27 +15,27 @@ import System.Exit (ExitCode (..))
 import qualified System.Process.ByteString as PB
 
 -- Get the raw bytes of a CodeGeneratorRequest for all of the bundled
--- capnproto core schema. Useful as a source of generic test data.
+-- zap core schema. Useful as a source of generic test data.
 getCGRBytes :: IO BS.ByteString
 getCGRBytes = do
   (exit, cgrBytes, _) <-
     PB.readProcessWithExitCode
-      "capnp"
+      "zap"
       [ "compile",
         "-o-",
         "-I",
         "core-schema/",
         "--src-prefix=core-schema/",
-        "core-schema/capnp/schema.capnp",
-        "core-schema/capnp/stream.capnp",
-        "core-schema/capnp/rpc-twoparty.capnp",
-        "core-schema/capnp/persistent.capnp",
-        "core-schema/capnp/rpc.capnp",
-        "core-schema/capnp/compat/json.capnp",
-        "core-schema/capnp/c++.capnp"
+        "core-schema/zap/schema.zap",
+        "core-schema/zap/stream.zap",
+        "core-schema/zap/rpc-twoparty.zap",
+        "core-schema/zap/persistent.zap",
+        "core-schema/zap/rpc.zap",
+        "core-schema/zap/compat/json.zap",
+        "core-schema/zap/c++.zap"
       ]
       ""
-  unless (exit == ExitSuccess) $ error "capnp compile failed"
+  unless (exit == ExitSuccess) $ error "zap compile failed"
   pure cgrBytes
 
 instance NFData (C.Message mut) where

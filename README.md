@@ -1,20 +1,18 @@
 [![hackage][hackage-img]][hackage]
 
-A Haskell library for the [Cap'N Proto][1] Cerialization and RPC
+A Haskell library for the [Zap][1] Cerialization and RPC
 protocol.
 
-Note, this project's official home is [on
-codeberg](https://codeberg.org/zenhack/haskell-capnp); if you're viewing
-this elsewhere, this is a mirror. For trivial changes we'll still accept
-patches here, but please file issues and submit more substantial changes
-via codeberg.
+This project's official home is [on
+GitHub](https://github.com/zap-proto/haskell); if you're viewing this
+elsewhere, this is a mirror. Please file issues and submit changes there.
 
 # Getting Started
 
 > **Docs:** [ZAP Haskell SDK](https://zap-proto.dev/docs/sdks/haskell) · part of the [ZAP Protocol](https://zap-proto.io)
 
 
-There is a module `Capnp.Tutorial` which contains an introduction
+There is a module `Zap.Tutorial` which contains an introduction
 to the library; users are *strongly* encouraged to read this first, as
 the reference documentation can be bewildering without that context.
 
@@ -41,11 +39,11 @@ The API is considered unstable. It will likely see changes, for the
 sake of polish, consistency, etc. as well as to improve performance and
 accommodate more features as we add them.
 
-[1]: https://capnproto.org/
-[2]: https://capnproto.org/language.html#evolving-your-protocol
+[1]: https://zap-proto.io
+[2]: https://zap-proto.io/docs/evolving-your-protocol
 
-[issue27]: https://codeberg.org/zenhack/haskell-capnp/issues/27
-[issue28]: https://codeberg.org/zenhack/haskell-capnp/issues/28
+[issue27]: https://github.com/zap-proto/haskell/issues/27
+[issue28]: https://github.com/zap-proto/haskell/issues/28
 
-[hackage-img]: https://img.shields.io/hackage/v/capnp.svg
-[hackage]: https://hackage.haskell.org/package/capnp
+[hackage-img]: https://img.shields.io/hackage/v/zap.svg
+[hackage]: https://hackage.haskell.org/package/zap

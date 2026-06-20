@@ -8,7 +8,7 @@
     use the new `requestBootstrap` function to get the bootstrap
     interface, using a connection reference supplied by `withConn`
     or `acquireConn`.
-- The high level API now maps Cap'n Proto lists to `[]`, rather than
+- The high level API now maps Zap lists to `[]`, rather than
   `Vector`.
 - `Fulfiller` now has an instance of `Contravariant`.
 - The Client type's Show instance now distinguishes between a null
@@ -21,9 +21,9 @@
   API has been removed.
 - Remove references to the old API from the tutorial.
 - Add two new modules:
-  - `Capnp.Rpc.Membrane`, which provides helpers for implementing
+  - `Zap.Rpc.Membrane`, which provides helpers for implementing
     membranes.
-  - `Capnp.Rpc.Revoke`, which supports revocable capabilities.
+  - `Zap.Rpc.Revoke`, which supports revocable capabilities.
 
 # 0.16.0.0
 
@@ -50,11 +50,11 @@
 
 - Significant performance improvements.
 - The `Data.Mutable` module and its `Thaw` class have been replaced
-  by `Capnp.Mutability` and a class `MaybeMutable`, which serves the
+  by `Zap.Mutability` and a class `MaybeMutable`, which serves the
   same function but is easier to work with. Notably, `thaw` and `freeze
   can now be used on `Raw` values directly.
-- `Mutability` is now defined in `Capnp.Mutability` instead of
-  `Capnp.Message`, though the latter still re-exports it for
+- `Mutability` is now defined in `Zap.Mutability` instead of
+  `Zap.Message`, though the latter still re-exports it for
   compatibility (for now).
 - The parameters to the `Raw` type constructor have been flipped; the
   new ordering makes it possible to implement thaw/freeze on `Raw a`
@@ -80,18 +80,18 @@ This release backports some fixes and minor features in the new API.
 * The 0.12.x series is the last major version that will support the old
   API; the next release will not generate code for the old API, and some
   low level interfaces will be removed. See
-  <https://zenhack.net/2021/07/30/new-haskell-capnp-release-reworked-apis.html>
+  <https://zenhack.net/2021/07/30/new-haskell-zap-release-reworked-apis.html>
   for details.
 * For the new API, there is a new `HasTypeId` class, with instances
   defined for all generated types.
-* The new API now supports implementing RPC servers. `Capnp.Tutorial`
+* The new API now supports implementing RPC servers. `Zap.Tutorial`
   discusses this, and the examples have been updated to use the new
   API.
 
 # 0.11.0.0
 
 * This release introduces some experimental new APIs; see the blog post
-  for details: <https://zenhack.net/2021/07/30/new-haskell-capnp-release-reworked-apis.html>
+  for details: <https://zenhack.net/2021/07/30/new-haskell-zap-release-reworked-apis.html>
   * The new APIs include support for RPC pipelining, which is not
     possible with the old APIs.
 * The traversal limit is tracked at a coarser granularity. This results
@@ -108,16 +108,16 @@ This release backports some fixes and minor features in the new API.
 * `LimitT m` now has an instance of `MonadCatch` if `m` has an instance.
 * Some harmless warnings triggered by the generated code are now
   silenced.
-* `Capnp.Rpc.Promise` exposes a new function `newReadyPromise`, which
+* `Zap.Rpc.Promise` exposes a new function `newReadyPromise`, which
   can be used to create an already-fulfilled promise.
 * Fixed a race condition where if the supervisor for a client is killed
   before the server has finished spawning, the shutdown method might
   not be run.
-* `Capnp.Rpc.Server.runServer` no longer calls handleStop on exit.
+* `Zap.Rpc.Server.runServer` no longer calls handleStop on exit.
   Most users of the library will not be affected, as this function is
   mostly a low-level implementation detail that is called by higher
   level functionality.
-* In `Capnp.Message` some uses of the type `Int` in the API have been
+* In `Zap.Message` some uses of the type `Int` in the API have been
   strengthened to type `WordCount`.
 
 # 0.10.0.1
@@ -129,7 +129,7 @@ This release backports some fixes and minor features in the new API.
 
 * The parametrization of messages has been reworked. Most things that
   were parametrized over a message type are now parametrized over a
-  type parameter of kind `Mutability` (defined in `Capnp.Message`).
+  type parameter of kind `Mutability` (defined in `Zap.Message`).
   * The Message type class has been replaced with a type `Message` of
     kind `Mutability -> *`, and a type class `MonadReadMessage` for
     operations that can work on any Message.
@@ -141,7 +141,7 @@ This release backports some fixes and minor features in the new API.
   `toByteString`/`fromByteString`, e.g. `Untyped.rawBytes`, also only
   work on immutable messages now, and may be pure functions where before
   they were monadic.
-* The types defined in `Capnp.Basics` now have `Thaw` instances.
+* The types defined in `Zap.Basics` now have `Thaw` instances.
 
 # 0.9.0.0
 
@@ -160,7 +160,7 @@ This release backports some fixes and minor features in the new API.
 
 ## Misc
 
-* Some of the multi-parameter type classes in Capnp.Classes now have
+* Some of the multi-parameter type classes in Zap.Classes now have
   functional dependencies between their parameters. This should
   generally improve type inference.
 
@@ -168,13 +168,13 @@ This release backports some fixes and minor features in the new API.
 
 ## Serialization
 
-* The library now supports canonicalization via Capnp.canonicalize
-* There is a new function Capnp.Message.singleSegment for constructing a
+* The library now supports canonicalization via Zap.canonicalize
+* There is a new function Zap.Message.singleSegment for constructing a
   `ConstMsg` from an (unframed) `Segment ConstMsg`.
 
 ## RPC
 
-* Some signatures in Capnp.Rpc.Untyped have changed to facilitate a
+* Some signatures in Zap.Rpc.Untyped have changed to facilitate a
   future release supporting promise pipelining.
 
 ## Misc
@@ -207,7 +207,7 @@ This release backports some fixes and minor features in the new API.
   All of its methods have default implementations, so adding an instance
   to existing servers is straightforward.
 * It is now possible to "unwrap" clients that point to a local server
-  using the new 'Capnp.Rpc.unwrapServer' function, if the server
+  using the new 'Zap.Rpc.unwrapServer' function, if the server
   implements support for it with the new 'Server' type class.
 * Servers can now specify a hook to be run when the server is shut down,
   using the server class's 'shutdown' method.
@@ -216,7 +216,7 @@ This release backports some fixes and minor features in the new API.
 
 ## Serialization
 
-In `Capnp.Untyped`, The `dataSection` and `ptrSection` APIs have been
+In `Zap.Untyped`, The `dataSection` and `ptrSection` APIs have been
 removed. `structDataSize` has been replaced with `structWordCount`,
 and new functions `structByteCount and `structPtrCount` have been added.
 
@@ -254,8 +254,8 @@ This release brings some improvements to the RPC API:
   will likely change substantially.
 * Many bug fixes; users are strongly encouraged to upgrade.
 * Reorganization of the module hierarchy:
-  * Generated code is now placed under `Capnp.Gen`, rather than `Capnp`.
-  * The `Data` prefix has been removed from the `Data.Capnp` hierarchy.
+  * Generated code is now placed under `Zap.Gen`, rather than `Zap`.
+  * The `Data` prefix has been removed from the `Data.Zap` hierarchy.
 * The included generated modules for the core schema have been updated
   to those shipped with version 0.7 of the reference implementation.
 * Other miscellaneous API Changes:
@@ -264,7 +264,7 @@ This release brings some improvements to the RPC API:
   * `LimitT m` is now an instance of `MonadIO`, provided that `m` is an
     instance.
   * More type class instances from elsewhere in the library are
-    re-exported via the `Capnp` module.
+    re-exported via the `Zap` module.
   * The `IsPtr` type class has been split into `FromPtr` and `ToPtr`. Most
     user code should not care about this.
   * Generated high-level types no longer have Read instances; interfaces
@@ -292,13 +292,13 @@ This release brings some improvements to the RPC API:
 * The `set_*` functions now check if the arguments are in the same
   message, and copy if need be ([#34][issue34]).
 * `MutMsg` is now an instance of `Eq`.
-* The `HasMessage` class from `Data.Capnp.Untyped` is now a type family,
+* The `HasMessage` class from `Data.Zap.Untyped` is now a type family,
   rather than a multi-parameter type class. This improves inference and
   removes some superfluous generalization.
-* The module `Data.Capnp.Pure` has been folded into `Data.Capnp`. If you
+* The module `Data.Zap.Pure` has been folded into `Data.Zap`. If you
   were previously using the `Text` and `Data` type aliases it exported,
   you should instead use `Text` from `Data.Text` and `ByteString` from
-  `Data.ByteString`; the `Text` and `Data` exported by `Data.Capnp` are
+  `Data.ByteString`; the `Text` and `Data` exported by `Data.Zap` are
   types from the low-level API.
 
 # 0.2.0.0
@@ -311,7 +311,7 @@ This release brings some improvements to the RPC API:
 
 * First release; basic read & write support, serialization only.
 
-[issue34]: https://github.com/zenhack/haskell-capnp/issues/34
-[issue41]: https://github.com/zenhack/haskell-capnp/issues/41
-[issue71]: https://github.com/zenhack/haskell-capnp/issues/71
-[issue72]: https://github.com/zenhack/haskell-capnp/issues/72
+[issue34]: https://github.com/zap-proto/haskell/issues/34
+[issue41]: https://github.com/zap-proto/haskell/issues/41
+[issue71]: https://github.com/zap-proto/haskell/issues/71
+[issue72]: https://github.com/zap-proto/haskell/issues/72

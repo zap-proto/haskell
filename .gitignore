@@ -25,8 +25,8 @@ result*
 # Generated code for examples & test suite. Note that we do *not*
 # ignore generated code for the main library, as there are cyclic
 # dependencies between it and the rest of the library.
-/examples/Capnp
-/tests/Capnp
+/examples/Zap
+/tests/Zap
 
 # I sometimes leave notes for myself in my working directory:
 /NOTES
