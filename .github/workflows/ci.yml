@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main, rebrand-validate]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ghc: ['9.4', '9.6']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/setup@v2
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          cabal-version: '3.10'
+      - run: cabal update
+      - run: cabal build all
+      - run: cabal test all
