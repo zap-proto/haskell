@@ -2138,7 +2138,7 @@ instance (C.EstimateListAlloc ElementSize ElementSize)
 data ZapVersion 
 type instance (R.ReprFor ZapVersion) = (R.Ptr (Std_.Just R.Struct))
 instance (C.HasTypeId ZapVersion) where
-    typeId  = 15590670654532458851
+    typeId  = 12068708361715070753
 instance (C.TypedStruct ZapVersion) where
     numStructWords  = 1
     numStructPtrs  = 0
@@ -2160,8 +2160,8 @@ deriving instance (Std_.Show (C.Parsed ZapVersion))
 deriving instance (Std_.Eq (C.Parsed ZapVersion))
 instance (C.Parse ZapVersion (C.Parsed ZapVersion)) where
     parse raw_ = (ZapVersion <$> (GH.parseField #major raw_)
-                               <*> (GH.parseField #minor raw_)
-                               <*> (GH.parseField #micro raw_))
+                             <*> (GH.parseField #minor raw_)
+                             <*> (GH.parseField #micro raw_))
 instance (C.Marshal ZapVersion (C.Parsed ZapVersion)) where
     marshalInto raw_ ZapVersion{..} = (do
         (GH.encodeField #major major raw_)

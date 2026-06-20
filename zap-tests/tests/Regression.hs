@@ -12,13 +12,13 @@ import Test.Hspec
 regressionTests :: Spec
 regressionTests = describe "Regression tests" $ do
   it "Should decode abort message successfully (issue #56)" $ do
+    -- Valid serialization of the (zap-branded) abort message below. The earlier
+    -- literal was corrupted by the capnp->zap rebrand: a find-replace shortened
+    -- the embedded "...capnproto library" text to "...zap library" without
+    -- updating the list-pointer length word, so the decoder over-read and threw
+    -- TraversalLimitError. Regenerated via parsedToLBS of the expected Message.
     let bytes =
-          "\NUL\NUL\NUL\NUL\ETB\NUL\NUL\NUL\NUL\NUL\NUL\NUL\SOH\NUL"
-            <> "\SOH\NUL\SOH\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL"
-            <> "\SOH\NUL\SOH\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\SOH\NUL"
-            <> "\NUL\NULz\EOT\NUL\NULYour vat sent an 'unimplemented' "
-            <> "message for an abort message that its remote peer never "
-            <> "sent. This is likely a bug in your zap library.\NUL\NUL"
+          "\NUL\NUL\NUL\NUL\ETB\NUL\NUL\NUL\NUL\NUL\NUL\NUL\SOH\NUL\SOH\NUL\SOH\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\SOH\NUL\SOH\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL\SOH\NUL\NUL\NULJ\EOT\NUL\NULYour vat sent an 'unimplemented' message for an abort message that its remote peer never sent. This is likely a bug in your zap library.\NUL\NUL\NUL\NUL\NUL\NUL\NUL\NUL"
     msg <- evalLimitT maxBound $ bsToParsed bytes
     msg
       `shouldBe` Message

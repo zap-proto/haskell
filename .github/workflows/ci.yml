@@ -15,6 +15,46 @@ jobs:
         ghc: ['9.4', '9.6']
     steps:
       - uses: actions/checkout@v4
+
+      # The integration tests (schema round-trips, RPC) shell out to the canonical
+      # `zap` schema front-end. Build it from zap-proto/cpp-core and put it +
+      # its standard schemas (/zap/stream.zap, ...) on PATH, same as the Rust CI.
+      - name: Install build deps for the zap front-end
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            cmake ninja-build clang-18 libc++-18-dev libc++abi-18-dev zlib1g-dev
+
+      - name: Cache zap front-end
+        id: cache-zap
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/bin/zap
+            /usr/local/include/zap
+          key: zap-frontend-${{ runner.os }}-cpp-core-main
+
+      - name: Build & install the zap front-end from cpp-core
+        if: steps.cache-zap.outputs.cache-hit != 'true'
+        env:
+          CC: clang-18
+          CXX: clang++-18
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch main \
+            https://github.com/zap-proto/cpp-core.git "$RUNNER_TEMP/cpp-core"
+          cmake -S "$RUNNER_TEMP/cpp-core/c++" -B "$RUNNER_TEMP/cpp-core/c++/build" \
+            -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \
+            -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++"
+          cmake --build "$RUNNER_TEMP/cpp-core/c++/build" --target zap_tool
+          zapbin="$(find "$RUNNER_TEMP/cpp-core/c++/build" -name zap -type f -perm -u+x | head -1)"
+          sudo install -m755 "$zapbin" /usr/local/bin/zap
+          sudo mkdir -p /usr/local/include/zap
+          sudo cp "$RUNNER_TEMP"/cpp-core/c++/src/zap/*.zap /usr/local/include/zap/
+
+      - name: Verify zap front-end
+        run: zap --version
+
       - uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
