@@ -60,5 +60,10 @@ jobs:
           ghc-version: ${{ matrix.ghc }}
           cabal-version: '3.10'
       - run: cabal update
+      # Generated schema modules for the test suite and examples are NOT checked
+      # in (gen/ dirs are gitignored); regen.sh builds the zapc-haskell plugin and
+      # runs `zap compile -ohaskell` to produce them. The main library's gen
+      # modules ARE committed (the bootstrap that lets zapc-haskell build first).
+      - run: sh scripts/regen.sh
       - run: cabal build all
       - run: cabal test all
