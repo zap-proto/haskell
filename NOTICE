@@ -1,0 +1,10 @@
+haskell — part of the ZAP Protocol (github.com/zap-proto)
+
+This product includes software developed by the haskell-capnp project:
+  haskell-capnp — https://github.com/zenhack/haskell-capnp
+  Copyright (c) 2016 Ian Denhardt
+  Licensed under the MIT License (see LICENSE.md).
+
+ZAP is a derivative work: a brand-neutral fork of haskell-capnp providing a
+Haskell library for the ZAP serialization and capability RPC protocol.
+Modifications Copyright (c) 2025 Lux Industries Inc.
